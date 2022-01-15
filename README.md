@@ -33,44 +33,48 @@ topic will be the pod-id
 ```
 {
     "message" : string,
-    "reciever" : ws-conn,
-    "sender" : username (string) // check if this can be removed
+    "reciever_id" : string,
+    "sender_id" :  string
 }
 ```
-- publish  ```message``` to  ```ws-conn```
 - ack() the message
-- save to dynamo db (?)
+- pass to the ws-writer
 
 ### kafka publisher
-- query redis for pod-id
+- query redis for recv_id to get pod_id
 - redis model
 
-key: username (string)
-val: pod-id, ws-conn (struct -> bytes string) (can also store array of structs to send to multiple devices username is connnected to)
-
+```
+key: user_id (string) // will work for one-user-one-conn
+val: pod-id
+```
 
 - publish to the pod from the value of redis
-- publish payload
+- (publish) payload
 ```
 {
     "message" : string,
-    "reciever" : ws-conn,
-    "sender" : username (string) // check if this can be removed
+    "reciever_id" : string,
+    "sender_id" : username (string)
 }
 ```
+- set database status to 'SENT'
 
 ### ws Writer
-- payload
+- payload (recieved)
 ```
 {
-    "message": string,
-    "ws-conn": recievers connection
+     "message" : string,
+    "reciever_id" : string,
+    "sender_id" : username (string)
 }
 ```
+- queries local map for reciever_id to get its ws.Conn
+- writes to conn
 - change message status to 'DELIVERED'
 
 ## ws reader (main routine)
-- save to database and mark status to 'SENT'
+- save to database and mark status to 'NONE'
 - recieving payload:
 ```
 {

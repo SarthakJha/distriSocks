@@ -11,9 +11,11 @@ import (
 func main() {
 	msgTable := repository.MessageRepository{}
 	usrTable := repository.UserRepository{}
+	redisRepo := repository.ConnectionRepository{}
 	hler := internal.Chans{}
 	hler.InitChan(10)
 
+	redisRepo.InitConnectionRepository()
 	msgTable.InitMessageConnection()
 	usrTable.InitUserConnection()
 

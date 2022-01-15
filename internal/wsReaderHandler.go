@@ -28,6 +28,8 @@ func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
+	// save to map [username:ws.Conn]
+	// save to redis [user_id:pod_id]
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -38,6 +40,10 @@ func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
 		err := ws.ReadJSON(&msg)
 		if err != nil {
 			// TODO:- handle error
+
+			// on disconnect:
+			// 1. remove key from sync.Map
+			// 2. remove key from redis
 		}
 		if c.publish == nil {
 			log.Fatalln("channel not initialised")
