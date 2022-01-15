@@ -7,6 +7,7 @@ func KafkaSub(recvChan chan models.Message, writerChan chan models.Message) {
 		select {
 		case recvMsg := <-recvChan:
 			// put into writer chan
+			// set status to SENT
 
 		}
 	}

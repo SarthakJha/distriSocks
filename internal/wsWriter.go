@@ -10,6 +10,7 @@ func WSWriterHandler(writeBuff chan models.Message) {
 		case msg := <-writeBuff:
 			// query local sync.MAP for key:id
 			// write to the return ws.Conn
+			// set status to 'DELIVERED'
 		}
 	}
 }
