@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/SarthakJha/distr-websock/internal"
 	"github.com/SarthakJha/distr-websock/repository"
@@ -19,9 +21,12 @@ func main() {
 	msgTable.InitMessageConnection()
 	usrTable.InitUserConnection()
 
+	// make 3 channels
+	// create go routines
+
 	http.HandleFunc("/ws", hler.HandleConn)
 
-	err := http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), nil)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
