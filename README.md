@@ -2,6 +2,8 @@
 
 ![architecture](https://firebasestorage.googleapis.com/v0/b/portfolio-a186e.appspot.com/o/DistriSock.drawio.png?alt=media&token=41df7dcf-b440-48b4-b3eb-04b96407019a)
 
+![websock-application](https://firebasestorage.googleapis.com/v0/b/portfolio-a186e.appspot.com/o/DistriSock-low%20level%20design.drawio.png?alt=media&token=8d170849-1744-490e-8146-a458198e71d9)
+
 ## Routines
 - sockRecv routine (main routine)
 - sockWriter routine
