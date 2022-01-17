@@ -1,14 +1,34 @@
 package internal
 
-import "github.com/SarthakJha/distr-websock/models"
+import (
+	"context"
+	"encoding/json"
+	"os"
 
-func KafkaSub(recvChan chan models.Message, writerChan chan models.Message) {
+	"github.com/SarthakJha/distr-websock/models"
+	"github.com/SarthakJha/distr-websock/stream"
+)
+
+func KafkaSub(writerChan chan models.Message, consumingPartition int64, partition int) {
+	brokers := []string{
+		os.Getenv("KAFKA_BROKER_1"),
+		os.Getenv("KAFKA_BROKER_2"),
+		os.Getenv("KAFKA_BROKER_3"),
+	}
+	reader := stream.GetKafkaConsumer(brokers, "something", os.Getenv("POD_ID"), int64(partition))
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	for {
-		select {
-		case recvMsg := <-recvChan:
-			// put into writer chan
-			// set status to SENT
-
+		// listen for elements then write to writer chan
+		msg, err := reader.ReadMessage(ctx)
+		if err != nil {
+			continue
 		}
+		var message models.Message
+		err = json.Unmarshal(msg.Value, &message)
+		if err != nil {
+			continue
+		}
+		writerChan <- message
 	}
 }
