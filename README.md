@@ -1,5 +1,6 @@
 # distriSocks
 
+![architecture](https://firebasestorage.googleapis.com/v0/b/portfolio-a186e.appspot.com/o/DistriSock.drawio.png?alt=media&token=41df7dcf-b440-48b4-b3eb-04b96407019a)
 
 ## Routines
 - sockRecv routine (main routine)
