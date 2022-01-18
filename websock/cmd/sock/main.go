@@ -21,7 +21,7 @@ func main() {
 	msgTable.InitMessageConnection()
 	usrTable.InitUserConnection()
 
-	// make 3 channels
+	// make 2 channels
 	// create go routines
 
 	http.HandleFunc("/ws", hler.HandleConn)

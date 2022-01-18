@@ -30,6 +30,10 @@
 ### topic
 topic will be the pod-id
 
+### partitions
+- all the consumer routines will pe part of a same consumer group subscribing to one topic
+- number of partions = number of consumers(consumer-routines) in a consumer group of the topic
+
 ### kafka listeners
 - each pod will listen to its own "pod-id" topic
 - recieve sub payload:

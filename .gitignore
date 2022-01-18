@@ -1,3 +1,4 @@
 bin
 modd.conf
 .env
+.DS_Store
