@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.42.30
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/guregu/dynamo v1.11.0
