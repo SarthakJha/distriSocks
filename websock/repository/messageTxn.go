@@ -3,8 +3,8 @@ package repository
 import (
 	"time"
 
-	"github.com/SarthakJha/distr-websock/constants"
-	"github.com/SarthakJha/distr-websock/models"
+	"github.com/SarthakJha/distr-websock/internal/constants"
+	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/gofrs/uuid"
 )
 

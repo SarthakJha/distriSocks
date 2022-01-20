@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/SarthakJha/distr-websock/models"
+	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/gorilla/websocket"
 )
