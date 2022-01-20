@@ -65,7 +65,7 @@ val: pod-id
     "sender_id" : username (string)
 }
 ```
-- set database status to 'SENT'
+- set database status to 'SENT'*
 
 ### ws Writer
 - payload (recieved)
@@ -78,7 +78,7 @@ val: pod-id
 ```
 - queries local map for reciever_id to get its ws.Conn
 - writes to conn
-- change message status to 'DELIVERED'
+- change message status to 'DELIVERED'*
 
 ## ws reader (main routine)
 - save to database and mark status to 'NONE'
@@ -90,3 +90,9 @@ val: pod-id
     "reciever_id": stirng
 }
 ```
+
+## potential upgrades
+- *
+    - emit event on topic: 'SET_STATUS_TO_SENT' /'SET_STATUS_TO_DELIVERED' from websock to auth svc
+    - carry writes/updates on user-table from auth svc
+    - carry writes/updates on message-table from websock-svc

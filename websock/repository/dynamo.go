@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/SarthakJha/distr-websock/constants"
+	"github.com/SarthakJha/distr-websock/internal/constants"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/guregu/dynamo"

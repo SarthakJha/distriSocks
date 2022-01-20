@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/SarthakJha/distr-websock/models"
+import "github.com/SarthakJha/distr-websock/internal/models"
 
 func (usr *UserRepository) QueryUserForEmail(email string) (models.User, error) {
 	var user models.User

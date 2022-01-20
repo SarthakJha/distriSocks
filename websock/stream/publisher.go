@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/SarthakJha/distr-websock/models"
+	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/segmentio/kafka-go"
 )
 

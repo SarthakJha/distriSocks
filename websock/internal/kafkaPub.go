@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/SarthakJha/distr-websock/models"
+	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/SarthakJha/distr-websock/stream"
 )
