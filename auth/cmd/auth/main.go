@@ -43,7 +43,7 @@ func main() {
 
 	// graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	defer server.Shutdown(ctx)
+	defer cancel()
 	fmt.Println("shutting down...")
 }
