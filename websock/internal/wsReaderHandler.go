@@ -55,6 +55,7 @@ func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
 	c.db.SetWSConnection("user-id from cookie", os.Getenv("POD_ID"))
 
 	defer ws.Close()
+	defer close(*c.publish)
 
 	for {
 		var msg models.Message

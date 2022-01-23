@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/SarthakJha/distr-websock/internal"
@@ -26,6 +27,8 @@ func main() {
 		WriteTimeout: time.Second * 60 * 5,
 		IdleTimeout:  time.Second * 60 * 5,
 	}
+	var wg1 sync.WaitGroup
+	var wg2 sync.WaitGroup
 
 	msgTable := repository.MessageRepository{}
 	usrTable := repository.UserRepository{}
@@ -39,11 +42,16 @@ func main() {
 
 	chan1 := make(chan models.Message, 10)
 
+	var ctxCan []context.CancelFunc
+	wg1.Add(10)
+	wg2.Add(10)
 	// TODO: create go routines
 	for i := 0; i < 10; i++ {
-		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i)
-		go internal.KafkaSub(chan1, i)
-		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable)
+		ctx, cancel := context.WithCancel(context.Background())
+		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i, &wg1)
+		go internal.KafkaSub(chan1, i, ctx)
+		ctxCan = append(ctxCan, cancel)
+		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable, &wg2)
 	}
 
 	http.HandleFunc("/ws", hler.HandleConn)
@@ -62,7 +70,14 @@ func main() {
 
 	// graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
-	defer server.Shutdown(ctx)
+	// shutting down publishing workers
+	for _, val := range ctxCan {
+		// sending cancel signal to all the producing workers
+		val()
+	}
+	server.Shutdown(ctx)
+	wg1.Wait()
+	wg2.Wait()
 	defer cancel()
 	// TODO: send shutdown signals to all goroutines
 
