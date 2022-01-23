@@ -8,6 +8,7 @@ require (
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/guregu/dynamo v1.11.0
 	github.com/joho/godotenv v1.4.0

@@ -12,6 +12,7 @@ import (
 	"github.com/SarthakJha/distr-websock/internal"
 	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/SarthakJha/distr-websock/repository"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"golang.org/x/net/context"
 )
@@ -20,12 +21,15 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln(err.Error())
 	}
+
+	r := mux.NewRouter()
 	// server config
 	server := &http.Server{
 		Addr:         fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")),
 		ReadTimeout:  time.Second * 60 * 5,
 		WriteTimeout: time.Second * 60 * 5,
 		IdleTimeout:  time.Second * 60 * 5,
+		Handler:      r,
 	}
 	var wg1 sync.WaitGroup
 	var wg2 sync.WaitGroup
@@ -54,7 +58,8 @@ func main() {
 		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable, &wg2)
 	}
 
-	http.HandleFunc("/ws", hler.HandleConn)
+	// middleware sequence
+	r.Handle("/ws", internal.UpgradeValidation(http.HandlerFunc(hler.HandleConn)))
 
 	go func() {
 		fmt.Println("listening at : ", server.Addr)

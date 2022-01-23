@@ -37,6 +37,10 @@ func (c *Chans) InitChan(buffer int64) {
 }
 
 func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
+
+	// passed in user data below
+	// user := r.Context().Value(UserData{}).(UserData)
+
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
