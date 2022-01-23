@@ -18,6 +18,14 @@ type Chans struct {
 	db      *repository.ConnectionRepository
 }
 
+// chan getter
+func (c *Chans) GetPubChan() *chan models.Message {
+	return c.publish
+}
+func (c *Chans) GetMap() *sync.Map {
+	return c.sockMap
+}
+
 func (c *Chans) InitChan(buffer int64) {
 	if buffer < 1 {
 		log.Fatalln("buffr size should be greater than one")

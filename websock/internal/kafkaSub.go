@@ -9,13 +9,13 @@ import (
 	"github.com/SarthakJha/distr-websock/stream"
 )
 
-func KafkaSub(writerChan chan models.Message, consumingPartition int64, partition int) {
+func KafkaSub(writerChan chan models.Message, consumingPartition int) {
 	brokers := []string{
 		os.Getenv("KAFKA_BROKER_1"),
 		os.Getenv("KAFKA_BROKER_2"),
 		os.Getenv("KAFKA_BROKER_3"),
 	}
-	reader := stream.GetKafkaConsumer(brokers, "something", os.Getenv("POD_ID"), int64(partition))
+	reader := stream.GetKafkaConsumer(brokers, "something", os.Getenv("POD_ID"), int64(consumingPartition))
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	for {

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/SarthakJha/distr-websock/internal"
+	"github.com/SarthakJha/distr-websock/internal/models"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/joho/godotenv"
 	"golang.org/x/net/context"
@@ -36,8 +37,14 @@ func main() {
 	msgTable.InitMessageConnection()
 	usrTable.InitUserConnection()
 
-	// TODO: make 2 channels
+	chan1 := make(chan models.Message, 10)
+
 	// TODO: create go routines
+	for i := 0; i < 10; i++ {
+		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i)
+		go internal.KafkaSub(chan1, i)
+		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable)
+	}
 
 	http.HandleFunc("/ws", hler.HandleConn)
 
