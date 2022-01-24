@@ -9,33 +9,34 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func WSWriterHandler(writeBuff chan models.Message, sockMap *sync.Map, db repository.MessageRepository) {
-	for {
-		select {
-		case msg := <-writeBuff:
-			// query local sync.MAP for key:id to get ws.Sock
-			sock, _ := sockMap.Load(msg.RecieverID)
-			if sock == nil {
-				sockMap.Delete(msg.RecieverID)
-				continue
-			}
-			websock, ok := sock.(*websocket.Conn) // converting interface to a struct
-			if !ok {
-				continue
-			}
+// consumer side of the channel
+func WSWriterHandler(writeBuff chan models.Message, sockMap *sync.Map, db repository.MessageRepository, wg *sync.WaitGroup) {
 
-			// write to the return ws.Conn
-			err := websock.WriteJSON(msg)
-			if err != nil {
-				fmt.Println(err.Error())
-				sockMap.Delete(msg.RecieverID)
-			}
+	defer wg.Done() // gracefull shutdown of consumer worker
+	// this will automatically shutdown when producing side of channel shuts
+	for msg := range writeBuff {
+		// query local sync.MAP for key:id to get ws.Sock
+		sock, _ := sockMap.Load(msg.RecieverID)
+		if sock == nil {
+			sockMap.Delete(msg.RecieverID)
+			continue
+		}
+		websock, ok := sock.(*websocket.Conn) // converting interface to a struct
+		if !ok {
+			continue
+		}
 
-			// set status to 'DELIVERED'
-			err = db.SetStatusToDelivered(msg.MessageID)
-			if err != nil {
-				fmt.Println(err.Error())
-			}
+		// write to the return ws.Conn
+		err := websock.WriteJSON(msg)
+		if err != nil {
+			fmt.Println(err.Error())
+			sockMap.Delete(msg.RecieverID)
+		}
+
+		// set status to 'DELIVERED'
+		err = db.SetStatusToDelivered(msg.MessageID)
+		if err != nil {
+			fmt.Println(err.Error())
 		}
 	}
 }

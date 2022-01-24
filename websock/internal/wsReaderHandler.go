@@ -18,6 +18,14 @@ type Chans struct {
 	db      *repository.ConnectionRepository
 }
 
+// chan getter
+func (c *Chans) GetPubChan() *chan models.Message {
+	return c.publish
+}
+func (c *Chans) GetMap() *sync.Map {
+	return c.sockMap
+}
+
 func (c *Chans) InitChan(buffer int64) {
 	if buffer < 1 {
 		log.Fatalln("buffr size should be greater than one")
@@ -29,6 +37,10 @@ func (c *Chans) InitChan(buffer int64) {
 }
 
 func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
+
+	// passed in user data below
+	// user := r.Context().Value(UserData{}).(UserData)
+
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
@@ -47,6 +59,7 @@ func (c *Chans) HandleConn(w http.ResponseWriter, r *http.Request) {
 	c.db.SetWSConnection("user-id from cookie", os.Getenv("POD_ID"))
 
 	defer ws.Close()
+	defer close(*c.publish)
 
 	for {
 		var msg models.Message
