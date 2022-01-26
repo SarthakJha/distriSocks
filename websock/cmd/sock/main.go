@@ -45,17 +45,14 @@ func main() {
 	usrTable.InitUserConnection()
 
 	chan1 := make(chan models.Message, 10)
+	kafkaSubCtx, kafkaSubCancel := context.WithCancel(context.Background())
 
-	var ctxCan []context.CancelFunc
-	wg1.Add(10)
-	wg2.Add(10)
-	// TODO: create go routines
 	for i := 0; i < 10; i++ {
-		ctx, cancel := context.WithCancel(context.Background())
 		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i, &wg1)
-		go internal.KafkaSub(chan1, i, ctx)
-		ctxCan = append(ctxCan, cancel)
+		wg1.Add(1)
+		go internal.KafkaSub(chan1, i, kafkaSubCtx)
 		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable, &wg2)
+		wg2.Add(1)
 	}
 
 	// middleware sequence
@@ -76,11 +73,8 @@ func main() {
 	// graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	// shutting down publishing workers
-	for _, val := range ctxCan {
-		// sending cancel signal to all the producing workers
-		val()
-	}
-	server.Shutdown(ctx)
+	server.Shutdown(ctx) // shutting down ws reader
+	kafkaSubCancel()     // shutting down kafka sub
 	wg1.Wait()
 	wg2.Wait()
 	defer cancel()
