@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/SarthakJha/distr-websock/internal/constants"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/guregu/dynamo"
@@ -17,26 +16,26 @@ type UserRepository struct {
 	Table *dynamo.Table
 }
 
-func (rep *MessageRepository) InitMessageConnection() {
+func (rep *MessageRepository) InitMessageConnection(region, tableName string) {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		Profile: "dynamodb",
 	}))
 	db := dynamo.New(sess, &aws.Config{
-		Region: aws.String(constants.AWS_REGION),
+		Region: aws.String(region),
 	})
-	table := db.Table(constants.USER_TABLE_NAME)
+	table := db.Table(tableName)
 	rep.DB = db
 	rep.Table = &table
 }
 
-func (rep *UserRepository) InitUserConnection() {
+func (rep *UserRepository) InitUserConnection(region, tableName string) {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		Profile: "dynamodb",
 	}))
 	db := dynamo.New(sess, &aws.Config{
-		Region: aws.String(constants.AWS_REGION),
+		Region: aws.String(region),
 	})
-	table := db.Table(constants.USER_TABLE_NAME)
+	table := db.Table(tableName)
 	rep.DB = db
 	rep.Table = &table
 }

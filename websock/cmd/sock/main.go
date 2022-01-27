@@ -11,6 +11,7 @@ import (
 
 	"github.com/SarthakJha/distr-websock/internal"
 	"github.com/SarthakJha/distr-websock/internal/models"
+	"github.com/SarthakJha/distr-websock/internal/utils"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -22,6 +23,10 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
+	conf, err := utils.LoadConfig("../../config/config.prod.json")
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 	r := mux.NewRouter()
 	// server config
 	server := &http.Server{
@@ -40,22 +45,19 @@ func main() {
 	hler := internal.Chans{}
 	hler.InitChan(10)
 
-	redisRepo.InitConnectionRepository()
-	msgTable.InitMessageConnection()
-	usrTable.InitUserConnection()
+	redisRepo.InitConnectionRepository(conf.REDIS_SERVICE, conf.REDIS_PORT)
+	msgTable.InitMessageConnection(conf.AWS_REGION, conf.MESSAGE_TABLE_NAME)
+	usrTable.InitUserConnection(conf.AWS_REGION, conf.USER_TABLE_NAME)
 
 	chan1 := make(chan models.Message, 10)
+	kafkaSubCtx, kafkaSubCancel := context.WithCancel(context.Background())
 
-	var ctxCan []context.CancelFunc
-	wg1.Add(10)
-	wg2.Add(10)
-	// TODO: create go routines
 	for i := 0; i < 10; i++ {
-		ctx, cancel := context.WithCancel(context.Background())
 		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i, &wg1)
-		go internal.KafkaSub(chan1, i, ctx)
-		ctxCan = append(ctxCan, cancel)
+		wg1.Add(1)
+		go internal.KafkaSub(chan1, i, kafkaSubCtx)
 		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable, &wg2)
+		wg2.Add(1)
 	}
 
 	// middleware sequence
@@ -76,11 +78,8 @@ func main() {
 	// graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	// shutting down publishing workers
-	for _, val := range ctxCan {
-		// sending cancel signal to all the producing workers
-		val()
-	}
-	server.Shutdown(ctx)
+	server.Shutdown(ctx) // shutting down ws reader
+	kafkaSubCancel()     // shutting down kafka sub
 	wg1.Wait()
 	wg2.Wait()
 	defer cancel()
