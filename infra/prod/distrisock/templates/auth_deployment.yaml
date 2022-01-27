@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  "{{ .Values.auth.deployment.name }}"
+  labels:
+    name:  "{{ .Values.auth.deployment.name }}"
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  replicas: "{{ .Values.auth.deployment.replicas }}"
+  template:
+    metadata:
+      labels:
+        name:  "{{ .Values.auth.deployment.name }}"
+    spec:
+      containers:
+      - image:  "{{ .Values.auth.deployment.image.registry | default sarthakjha }}/{{ .Values.auth.deployment.image.name }}:{{ .Values.auth.deployment.image.tag }}"
+        name:  "{{ .Values.auth.deployment.name }}"
+        resources:
+          requests:
+            cpu: "{{ .Values.auth.deployment.cpu | default 50Mi }}"
+            memory: "{{ .Values.auth.deployment.memory | default 10m }}"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 5000
+        #   initialDelaySeconds: 90
+        #   timeoutSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 5000
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 10
+        ports:
+        - containerPort:  "{{ .Values.auth.deployment.port | default 3000 }}"
+          name:  "{{ .Values.auth.deployment.name }}"
+      
+      #   volumeMounts:
+      #   - mountPath: /data
+      #     name: data
+      # volumes:
+      #   - name: data
+      #     emptyDir: {}
+      restartPolicy: Always
+      imagePullPolicy: Always

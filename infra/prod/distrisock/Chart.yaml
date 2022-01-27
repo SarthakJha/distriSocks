@@ -1,6 +1,6 @@
 apiVersion: v2
 name: distrisock
-description: A Helm chart for Kubernetes
+description: horizontally scalable distributed websockets
 
 # A chart can be either an 'application' or a 'library' chart.
 #

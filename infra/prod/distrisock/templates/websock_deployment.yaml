@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  "{{ .Values.websock.deployment.name }}"
+  labels:
+    name:  "{{ .Values.websock.deployment.name }}"
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  replicas: "{{ .Values.websock.deployment.replicas }}"
+  template:
+    metadata:
+      labels:
+        name:  "{{ .Values.websock.deployment.name }}"
+    spec:
+      containers:
+      - image:  "{{ .Values.websock.deployment.image.registry | default sarthakjha }}/{{ .Values.websock.deployment.image.name }}:{{ .Values.websock.deployment.image.tag }}"
+        name:  "{{ .Values.websock.deployment.name }}"
+        resources:
+          requests:
+            cpu: "{{ .Values.websock.deployment.cpu | default 50Mi }}"
+            memory: "{{ .Values.websock.deployment.memory | default 10m }}"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 5000
+        #   initialDelaySeconds: 90
+        #   timeoutSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 5000
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 10
+        ports:
+        - containerPort:  "{{ .Values.websock.deployment.port | default 3000 }}"
+          name:  "{{ .Values.websock.deployment.name }}"
+      
+      #   volumeMounts:
+      #   - mountPath: /data
+      #     name: data
+      # volumes:
+      #   - name: data
+      #     emptyDir: {}
+      restartPolicy: Always
+      imagePullPolicy: Always
