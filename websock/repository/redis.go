@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -11,9 +10,9 @@ type ConnectionRepository struct {
 	Client *redis.Client
 }
 
-func (c *ConnectionRepository) InitConnectionRepository() {
+func (c *ConnectionRepository) InitConnectionRepository(redisHost, redisPort string) {
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
+		Addr:     fmt.Sprintf("%s:%s", redisHost, redisPort),
 		Password: "",
 		DB:       0,
 	})

@@ -11,6 +11,7 @@ import (
 
 	"github.com/SarthakJha/distr-websock/internal"
 	"github.com/SarthakJha/distr-websock/internal/models"
+	"github.com/SarthakJha/distr-websock/internal/utils"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -22,6 +23,10 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
+	conf, err := utils.LoadConfig("../../config/config.prod.json")
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 	r := mux.NewRouter()
 	// server config
 	server := &http.Server{
@@ -40,9 +45,9 @@ func main() {
 	hler := internal.Chans{}
 	hler.InitChan(10)
 
-	redisRepo.InitConnectionRepository()
-	msgTable.InitMessageConnection()
-	usrTable.InitUserConnection()
+	redisRepo.InitConnectionRepository(conf.REDIS_SERVICE, conf.REDIS_PORT)
+	msgTable.InitMessageConnection(conf.AWS_REGION, conf.MESSAGE_TABLE_NAME)
+	usrTable.InitUserConnection(conf.AWS_REGION, conf.USER_TABLE_NAME)
 
 	chan1 := make(chan models.Message, 10)
 	kafkaSubCtx, kafkaSubCancel := context.WithCancel(context.Background())
