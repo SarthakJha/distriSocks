@@ -1,9 +1,7 @@
 package internal
 
 import (
-	"log"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -16,18 +14,14 @@ type AccessTokenCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func SignUserToken(userID, username, tokenType string) (string, error) {
-	expiration, err := strconv.Atoi(os.Getenv("JWT_EXPIRATION"))
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
+func SignUserToken(userID, username, tokenType, issuer string, expiration int) (string, error) {
 	claims := AccessTokenCustomClaims{
 		userID:    userID,
 		username:  username,
 		tokenType: "access",
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * time.Duration(expiration)).Unix(),
-			Issuer:    os.Getenv("JWT_ISSUER"),
+			Issuer:    issuer,
 		},
 	}
 
