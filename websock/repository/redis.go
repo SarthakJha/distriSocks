@@ -1,20 +1,17 @@
 package repository
 
 import (
-	"fmt"
-
+	"github.com/SarthakJha/distr-websock/internal/utils"
 	"github.com/go-redis/redis/v8"
 )
 
 type ConnectionRepository struct {
-	Client *redis.Client
+	Client *redis.ClusterClient
 }
 
 func (c *ConnectionRepository) InitConnectionRepository(redisHost, redisPort string) {
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", redisHost, redisPort),
-		Password: "",
-		DB:       0,
+	redisClient := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs: utils.ResolveHeadlessServiceDNS(redisHost, "redis"),
 	})
 
 	c.Client = redisClient

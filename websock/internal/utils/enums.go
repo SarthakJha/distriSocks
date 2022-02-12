@@ -1,4 +1,4 @@
-package constants
+package utils
 
 const (
 	USER_TABLE_NAME      = "Users"

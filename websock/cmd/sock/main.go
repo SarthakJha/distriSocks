@@ -53,9 +53,9 @@ func main() {
 	kafkaSubCtx, kafkaSubCancel := context.WithCancel(context.Background())
 
 	for i := 0; i < 10; i++ {
-		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i, &wg1)
+		go internal.KafkaPub(*hler.GetPubChan(), &redisRepo, i, &wg1, conf)
 		wg1.Add(1)
-		go internal.KafkaSub(chan1, i, kafkaSubCtx)
+		go internal.KafkaSub(chan1, i, kafkaSubCtx, conf)
 		go internal.WSWriterHandler(chan1, hler.GetMap(), msgTable, &wg2)
 		wg2.Add(1)
 	}

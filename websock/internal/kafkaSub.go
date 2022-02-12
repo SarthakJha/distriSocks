@@ -7,15 +7,12 @@ import (
 	"os"
 
 	"github.com/SarthakJha/distr-websock/internal/models"
+	"github.com/SarthakJha/distr-websock/internal/utils"
 	"github.com/SarthakJha/distr-websock/stream"
 )
 
-func KafkaSub(writerChan chan models.Message, consumingPartition int, ctx context.Context) {
-	brokers := []string{
-		os.Getenv("KAFKA_BROKER_1"),
-		os.Getenv("KAFKA_BROKER_2"),
-		os.Getenv("KAFKA_BROKER_3"),
-	}
+func KafkaSub(writerChan chan models.Message, consumingPartition int, ctx context.Context, conf utils.Config) {
+	brokers := utils.ResolveHeadlessServiceDNS(conf.KAFKA_SERVICE, "kafka")
 	reader := stream.GetKafkaConsumer(brokers, "something", os.Getenv("POD_ID"), int64(consumingPartition))
 	ctx1, cancel := context.WithCancel(context.Background())
 	defer cancel()

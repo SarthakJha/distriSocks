@@ -6,11 +6,12 @@ import (
 	"sync"
 
 	"github.com/SarthakJha/distr-websock/internal/models"
+	"github.com/SarthakJha/distr-websock/internal/utils"
 	"github.com/SarthakJha/distr-websock/repository"
 	"github.com/SarthakJha/distr-websock/stream"
 )
 
-func KafkaPub(recvChan chan models.Message, redis *repository.ConnectionRepository, partition int, wg *sync.WaitGroup) {
+func KafkaPub(recvChan chan models.Message, redis *repository.ConnectionRepository, partition int, wg *sync.WaitGroup, conf utils.Config) {
 	defer wg.Done() // graceful shutdown
 	// this will automatically shut when producing side of channel shuts
 	for msg := range recvChan {
@@ -19,12 +20,7 @@ func KafkaPub(recvChan chan models.Message, redis *repository.ConnectionReposito
 		if err != nil || len(val) == 0 {
 			continue
 		}
-		brokers := []string{
-			os.Getenv("KAFKA_BROKER_1"),
-			os.Getenv("KAFKA_BROKER_2"),
-			os.Getenv("KAFKA_BROKER_3"),
-		}
-		// publish to kafka to topic pod_id
+		brokers := utils.ResolveHeadlessServiceDNS(conf.KAFKA_SERVICE, "kafka") // publish to kafka to topic pod_id
 		err = stream.PublishMessage(brokers, os.Getenv("POD_ID"), partition, msg)
 		if err != nil {
 			log.Fatalln(err.Error())
