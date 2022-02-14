@@ -10,19 +10,19 @@ spec:
       maxSurge: 1
       maxUnavailable: 0
     type: RollingUpdate
-  replicas: "{{ .Values.auth.deployment.replicas }}"
+  replicas: {{ .Values.auth.deployment.replicas }}
   template:
     metadata:
       labels:
-        name:  "{{ .Values.auth.deployment.name }}"
+        name:  {{ .Values.auth.deployment.name }}
     spec:
       containers:
-      - image:  "{{ .Values.auth.deployment.image.registry | default sarthakjha }}/{{ .Values.auth.deployment.image.name }}:{{ .Values.auth.deployment.image.tag }}"
-        name:  "{{ .Values.auth.deployment.name }}"
+      - image:  {{ .Values.auth.deployment.image.registry | default "sarthakjha" }}/{{ .Values.auth.deployment.image.name }}:{{ .Values.auth.deployment.image.tag }}
+        name:  {{ .Values.auth.deployment.name }}
         resources:
           requests:
-            cpu: "{{ .Values.auth.deployment.cpu | default 50Mi }}"
-            memory: "{{ .Values.auth.deployment.memory | default 10m }}"
+            cpu: {{ .Values.auth.deployment.cpu | default "50Mi" }}
+            memory: {{ .Values.auth.deployment.memory | default "10m" }}
         # livenessProbe:
         #   httpGet:
         #     path: /_status/healthz
@@ -36,8 +36,8 @@ spec:
         #   initialDelaySeconds: 30
         #   timeoutSeconds: 10
         ports:
-        - containerPort:  "{{ .Values.auth.deployment.port | default 3000 }}"
-          name:  "{{ .Values.auth.deployment.name }}"
+        - containerPort:  {{ .Values.auth.deployment.port | default 3000 }}
+          name:  {{ .Values.auth.deployment.name }}
       
       #   volumeMounts:
       #   - mountPath: /data

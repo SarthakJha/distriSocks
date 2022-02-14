@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  "{{ .Values.websock.deployment.name }}"
+  name:  {{ .Values.websock.deployment.name | quote }}
   labels:
-    name:  "{{ .Values.websock.deployment.name }}"
+    name:  {{ .Values.websock.deployment.name | quote }}
 spec:
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
     type: RollingUpdate
-  replicas: "{{ .Values.websock.deployment.replicas }}"
+  replicas: {{ .Values.websock.deployment.replicas | quote }}
   template:
     metadata:
       labels:
-        name:  "{{ .Values.websock.deployment.name }}"
+        name:  {{ .Values.websock.deployment.name | quote }}
     spec:
       containers:
-      - image:  "{{ .Values.websock.deployment.image.registry | default sarthakjha }}/{{ .Values.websock.deployment.image.name }}:{{ .Values.websock.deployment.image.tag }}"
-        name:  "{{ .Values.websock.deployment.name }}"
+      - image:  {{ .Values.websock.deployment.image.registry | default "sarthakjha" }}/{{ .Values.websock.deployment.image.name }}:{{ .Values.websock.deployment.image.tag }}
+        name:  {{ .Values.websock.deployment.name | quote }}
         resources:
           requests:
-            cpu: "{{ .Values.websock.deployment.cpu | default 50Mi }}"
-            memory: "{{ .Values.websock.deployment.memory | default 10m }}"
+            cpu: {{ .Values.websock.deployment.cpu | default "50Mi" }}
+            memory: {{ .Values.websock.deployment.memory | default "10m" }}
         # livenessProbe:
         #   httpGet:
         #     path: /_status/healthz
@@ -36,8 +36,8 @@ spec:
         #   initialDelaySeconds: 30
         #   timeoutSeconds: 10
         ports:
-        - containerPort:  "{{ .Values.websock.deployment.port | default 3000 }}"
-          name:  "{{ .Values.websock.deployment.name }}"
+        - containerPort:  {{ .Values.websock.deployment.port | default 3000 }}
+          name:  {{ .Values.websock.deployment.name | quote }}
       
       #   volumeMounts:
       #   - mountPath: /data
