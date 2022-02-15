@@ -1,3 +1,4 @@
+namespace: distrisock
 auth: 
   name: auth-distrisock
   deployment:

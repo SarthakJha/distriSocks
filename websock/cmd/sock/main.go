@@ -30,7 +30,7 @@ func main() {
 	r := mux.NewRouter()
 	// server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")),
+		Addr:         fmt.Sprintf("0.0.0.0:%s", conf.PORT),
 		ReadTimeout:  time.Second * 60 * 5,
 		WriteTimeout: time.Second * 60 * 5,
 		IdleTimeout:  time.Second * 60 * 5,
