@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.auth.name}}-cfmap
+  labels:
+    app: {{.Values.auth.name}}-cfmap
+data:
+  config.prod.json: |
+    {
+    "port": 3000,
+    "kafka_service": "",
+    "redis_service": "",
+    "redis_port": 6379,
+    "kafka_port": 9092,
+    "worker_count": 10,
+    "user_table_name": "Users",
+    "message_table_name": "Messages",
+    "aws_region": "ap-south-1"
+    }

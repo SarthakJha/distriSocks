@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  {{ .Values.websock.deployment.name | quote }}
+  name:  {{ .Values.websock.name | quote }}
   labels:
-    name:  {{ .Values.websock.deployment.name | quote }}
+    name:  {{ .Values.websock.name | quote }}
 spec:
   strategy:
     rollingUpdate:
@@ -14,11 +14,11 @@ spec:
   template:
     metadata:
       labels:
-        name:  {{ .Values.websock.deployment.name | quote }}
+        name:  {{ .Values.websock.name | quote }}
     spec:
       containers:
       - image:  {{ .Values.websock.deployment.image.registry | default "sarthakjha" }}/{{ .Values.websock.deployment.image.name }}:{{ .Values.websock.deployment.image.tag }}
-        name:  {{ .Values.websock.deployment.name | quote }}
+        name:  {{ .Values.websock.name | quote }}
         resources:
           requests:
             cpu: {{ .Values.websock.deployment.cpu | default "50Mi" }}
@@ -37,13 +37,13 @@ spec:
         #   timeoutSeconds: 10
         ports:
         - containerPort:  {{ .Values.websock.deployment.port | default 3000 }}
-          name:  {{ .Values.websock.deployment.name | quote }}
+          name:  {{ .Values.websock.name | quote }}
       
-      #   volumeMounts:
-      #   - mountPath: /data
-      #     name: data
-      # volumes:
-      #   - name: data
-      #     emptyDir: {}
+        volumeMounts:
+        - mountPath: /websock-config
+          name: config
+      volumes:
+        - name: config
+          configMap: {{.Values.websock.name}}-cfmap
       restartPolicy: Always
       imagePullPolicy: Always

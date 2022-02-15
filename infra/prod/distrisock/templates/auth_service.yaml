@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name:  "{{ .Values.auth.service.name }}"
+  name:  {{ .Values.auth.name }}-svc
 spec:
   selector:
-    app:  "{{ .Values.auth.service.selectorApp }}"
+    app:  {{ .Values.auth.name }}-svc
   type: ClusterIP
-  sessionAffinty: "{{ .Values.auth.service.sessionAffinity }}"
+  sessionAffinty: {{ .Values.auth.service.sessionAffinity | quote }}
   sessionAffinityConfig:
     clientIP:
       timeoutSeconds: 10
   ports:
-  - name:  "{{ .Values.auth.service.port.name }}"
-    port:  "{{ .Values.auth.service.port.number }}"
-    targetPort:  "{{ .Values.auth.service.port.targetPort }}"
+  - name:  {{ .Values.auth.service.port.name | quote }}
+    port:  {{ .Values.auth.service.port.number }}
+    targetPort:  {{ .Values.auth.service.port.targetPort }}

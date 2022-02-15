@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  "{{ .Values.auth.deployment.name }}"
+  name:  {{ .Values.auth.name | quote}}
   labels:
-    name:  "{{ .Values.auth.deployment.name }}"
+    name:  {{ .Values.auth.name | quote }}
 spec:
   strategy:
     rollingUpdate:
@@ -14,11 +14,11 @@ spec:
   template:
     metadata:
       labels:
-        name:  {{ .Values.auth.deployment.name }}
+        name:  {{ .Values.auth.name }}
     spec:
       containers:
       - image:  {{ .Values.auth.deployment.image.registry | default "sarthakjha" }}/{{ .Values.auth.deployment.image.name }}:{{ .Values.auth.deployment.image.tag }}
-        name:  {{ .Values.auth.deployment.name }}
+        name:  {{ .Values.auth.name }}
         resources:
           requests:
             cpu: {{ .Values.auth.deployment.cpu | default "50Mi" }}
@@ -39,11 +39,11 @@ spec:
         - containerPort:  {{ .Values.auth.deployment.port | default 3000 }}
           name:  {{ .Values.auth.deployment.name }}
       
-      #   volumeMounts:
-      #   - mountPath: /data
-      #     name: data
-      # volumes:
-      #   - name: data
-      #     emptyDir: {}
+        volumeMounts:
+        - mountPath: /auth-config
+          name: config
+      volumes:
+        - name: config
+          configMap: {{.Values.auth.name}}-cfmap
       restartPolicy: Always
       imagePullPolicy: Always
