@@ -1,0 +1,37 @@
+auth: 
+  name: auth-distrisock
+  deployment:
+    replicas: 5
+    cpu: 50Mi
+    memory: 10m
+    port: 3000
+    image: 
+      registry: sarthakjha
+      name: auth-distrisock
+      tag: latest
+
+  service:
+    sessionAffinity: None
+    port:
+      name: auth-distrisock-svc
+      number: 80
+      targetPort: 3000
+
+websock:
+  name: websock-distrisock
+  deployment:
+    replicas: 5
+    cpu: 50Mi
+    memory: 10m
+    port: 3000
+    image: 
+      registry: sarthakjha
+      name: websock-distrisock
+      tag: latest
+
+  service:
+    sessionAffinity: ClientIP
+    port:
+      name: websock-distrisock-svc
+      number: 80
+      targetPort: 3000
