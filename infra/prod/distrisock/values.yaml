@@ -1,6 +1,6 @@
-auth:  
+auth: 
+  name: auth-distrisock
   deployment:
-    name: auth-distrisock
     replicas: 5
     cpu: 50Mi
     memory: 10m
@@ -11,8 +11,6 @@ auth:
       tag: latest
 
   service:
-    name: auth-distrisock-svc
-    selectorApp: auth-distrisock
     sessionAffinity: None
     port:
       name: auth-distrisock-svc
@@ -20,8 +18,8 @@ auth:
       targetPort: 3000
 
 websock:
+  name: websock-distrisock
   deployment:
-    name: websock-distrisock
     replicas: 5
     cpu: 50Mi
     memory: 10m
@@ -32,8 +30,6 @@ websock:
       tag: latest
 
   service:
-    name: websock-distrisock-svc
-    selectorApp: websock-distrisock
     sessionAffinity: ClientIP
     port:
       name: websock-distrisock-svc
