@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Values.namespace }}
   name:  {{ .Values.auth.name | quote}}
   labels:
     name:  {{ .Values.auth.name | quote }}
@@ -42,6 +43,27 @@ spec:
         volumeMounts:
         - mountPath: /auth-config
           name: config
+        env: 
+          - name: POD_ID
+            valueFrom: 
+              fieldRef: 
+                fieldPath: metadata.uid
+          - name: JWT_SECRET
+            valueFrom: 
+              secretKeyRef:
+                name: jwt-secret
+                key: secret 
+          - name: ACCESS_KEY_ID
+            valueFrom: 
+              secretKeyRef:
+                name: aws-access-key-id
+                key: secret
+          - name: ACCESS_KEY_SECRET
+            valueFrom: 
+              secretKeyRef:
+                name: aws-access-key-secret
+                key: secret
+
       volumes:
         - name: config
           configMap: {{.Values.auth.name}}-cfmap

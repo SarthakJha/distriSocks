@@ -1,3 +1,8 @@
+namespace: distrisock
+redisHeadlessSvc: redis-redis-cluster-headless.redis
+redisSvc: redis-redis-cluster.redis
+kafkaHeadlessSvc: distrisock-kafka-headless.kafka
+kafkaSvc: distrisock-kafka.kafka
 auth: 
   name: auth-distrisock
   deployment:
