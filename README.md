@@ -112,6 +112,3 @@ val: pod-id
 - - - emit event on topic: 'SET_STATUS_TO_SENT' /'SET_STATUS_TO_DELIVERED' from websock to auth svc
     - carry writes/updates on user-table from auth svc
     - carry writes/updates on message-table from websock-svc
-
-    - something
-    - something somethiungh
